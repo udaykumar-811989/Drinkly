@@ -179,11 +179,11 @@ enum DryDayStatus {
 // ─── Models ──────────────────────────────────────────────────────────────────
 
 model User {
-  id              String    @id @default(uuid()) 
-  email           String    @unique 
-  phone           String?   @unique 
-  passwordHash    String    
-  name            String    
+  id              String    @id @default(uuid())
+  email           String    @unique
+  phone           String?   @unique
+  passwordHash    String
+  name            String
   role            UserRole  @default(CUSTOMER)
   status          UserStatus @default(PENDING_VERIFICATION)
   emailVerified   Boolean   @default(false)
@@ -203,7 +203,7 @@ model User {
   orders           Order[]             @relation("OrderCustomer")
   complianceRulesCreated ComplianceRule[] @relation("ComplianceCreatedBy")
   complianceRulesUpdated ComplianceRule[] @relation("ComplianceUpdatedBy")
-  retailerLicencesVerified RetailerLicence[]
+  retailerLicencesVerified RetailerLicence[] @relation("RetailerLicenceVerifier")
   notifications    Notification[]
   auditLogs        AuditLog[]
   supportTickets   SupportTicket[]     @relation("TicketUser")
@@ -214,29 +214,31 @@ model User {
   otps             OTP[]
   sessions         Session[]
   deliveryVerificationsPerformed DeliveryVerification[] @relation("VerifiedBy")
+  deliveryVerificationsAsCustomer DeliveryVerification[] @relation("DeliveryVerificationCustomer")
+  processedRefunds Refund[]            @relation("RefundProcessor")
 
   @@index([email])
   @@index([phone])
   @@index([role])
   @@index([status])
   @@index([createdAt])
-  @
+
 }
 
 model CustomerProfile {
-  id                    String                @id @default(uuid()) 
-  userId                String                @unique 
-  dateOfBirth           DateTime              
+  id                    String                @id @default(uuid())
+  userId                String                @unique
+  dateOfBirth           DateTime
   ageVerified           AgeVerificationStatus @default(PENDING)
-  verificationMethod    String?               
-  verificationReference String?               
+  verificationMethod    String?
+  verificationReference String?
 
-  addressLine1          String                
-  addressLine2          String?               
-  addressCity           String                
-  addressState          String                
-  addressZipCode        String                
-  addressCountry        String                @default("IN") 
+  addressLine1          String
+  addressLine2          String?
+  addressCity           String
+  addressState          String
+  addressZipCode        String
+  addressCountry        String                @default("IN")
   addressLatitude       Float?
   addressLongitude      Float?
   addressIsDefault      Boolean               @default(true)
@@ -248,34 +250,34 @@ model CustomerProfile {
 
   @@index([userId])
   @@index([ageVerified])
-  @
+
 }
 
 model Retailer {
-  id                          String         @id @default(uuid()) 
-  ownerId                     String         
-  legalBusinessName           String         
-  displayName                 String         
-  description                 String?        
-  phone                       String         
-  email                       String         
+  id                          String         @id @default(uuid())
+  ownerId                     String
+  legalBusinessName           String
+  displayName                 String
+  description                 String?
+  phone                       String
+  email                       String
 
-  addressLine1                String         
-  addressLine2                String?        
-  addressCity                 String         
-  addressState                String         
-  addressZipCode              String         
-  addressCountry              String         @default("IN") 
+  addressLine1                String
+  addressLine2                String?
+  addressCity                 String
+  addressState                String
+  addressZipCode              String
+  addressCountry              String         @default("IN")
   latitude                    Float
   longitude                   Float
 
-  logoUrl                     String?        
-  bannerUrl                   String?        
+  logoUrl                     String?
+  bannerUrl                   String?
   status                      RetailerStatus @default(PENDING)
-  minimumOrderAmount          Decimal        @default(0) 
+  minimumOrderAmount          Decimal        @default(0)
   estimatedDeliveryTimeMinutes Int           @default(60)
-  operatingRadiusKm           Decimal        @default(10) 
-  rating                      Decimal        @default(0) 
+  operatingRadiusKm           Decimal        @default(10)
+  rating                      Decimal        @default(0)
   totalOrders                 Int            @default(0)
 
   createdAt                   DateTime       @default(now())
@@ -296,21 +298,21 @@ model Retailer {
   @@index([status])
   @@index([latitude, longitude])
   @@index([createdAt])
-  @
+
 }
 
 model RetailerLicence {
-  id                 String                    @id @default(uuid()) 
-  retailerId         String                    
-  licenceNumber      String                    
-  licenceType        String                    
-  issuingAuthority   String                    
-  issueDate          DateTime                  
-  expiryDate         DateTime                  
-  documentUrl        String                    
+  id                 String                    @id @default(uuid())
+  retailerId         String
+  licenceNumber      String
+  licenceType        String
+  issuingAuthority   String
+  issueDate          DateTime
+  expiryDate         DateTime
+  documentUrl        String
   verificationStatus LicenceVerificationStatus @default(PENDING)
-  verifiedBy         String?                   
-  verificationNotes  String?                   
+  verifiedBy         String?
+  verificationNotes  String?
   verifiedAt         DateTime?
   createdAt          DateTime                  @default(now())
   updatedAt          DateTime                  @updatedAt
@@ -321,13 +323,13 @@ model RetailerLicence {
   @@index([retailerId])
   @@index([verificationStatus])
   @@index([licenceNumber])
-  @
+
 }
 
 model RetailerStaff {
-  id         String            @id @default(uuid()) 
-  retailerId String            
-  userId     String            
+  id         String            @id @default(uuid())
+  retailerId String
+  userId     String
   role       RetailerStaffRole @default(STAFF)
   createdAt  DateTime          @default(now())
   updatedAt  DateTime          @updatedAt
@@ -338,29 +340,29 @@ model RetailerStaff {
   @@unique([retailerId, userId])
   @@index([retailerId])
   @@index([userId])
-  @
+
 }
 
 model DeliveryAgent {
-  id              String              @id @default(uuid()) 
-  userId          String              @unique 
-  dateOfBirth     DateTime            
-  vehicleType     String              
-  vehicleNumber   String              
-  licenseNumber   String              
+  id              String              @id @default(uuid())
+  userId          String              @unique
+  dateOfBirth     DateTime
+  vehicleType     String
+  vehicleNumber   String
+  licenseNumber   String
 
-  addressLine1    String              
-  addressLine2    String?             
-  addressCity     String              
-  addressState    String              
-  addressZipCode  String              
-  addressCountry  String              @default("IN") 
+  addressLine1    String
+  addressLine2    String?
+  addressCity     String
+  addressState    String
+  addressZipCode  String
+  addressCountry  String              @default("IN")
   latitude        Float
   longitude       Float
 
   isAvailable     Boolean             @default(false)
-  currentOrderId  String?             
-  rating          Decimal             @default(0) 
+  currentOrderId  String?   @unique
+  rating          Decimal             @default(0)
   totalDeliveries Int                 @default(0)
   status          DeliveryAgentStatus @default(PENDING)
 
@@ -370,29 +372,29 @@ model DeliveryAgent {
 
   user     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   deliveries Delivery[]
-  currentOrder Order?  @relation("CurrentDeliveryOrder")
+  currentOrder Order?  @relation("CurrentDeliveryOrder", fields: [currentOrderId], references: [id], onDelete: SetNull)
 
   @@index([userId])
   @@index([status])
   @@index([latitude, longitude])
   @@index([isAvailable])
-  @
+
 }
 
 model Product {
-  id              String        @id @default(uuid()) 
-  retailerId      String        
-  categoryId      String        
-  name            String        
-  brand           String        
-  description     String?       
+  id              String        @id @default(uuid())
+  retailerId      String
+  categoryId      String
+  name            String
+  brand           String
+  description     String?
   bottleSizeMl    Int
-  alcoholPercentage Decimal     
-  mrp             Decimal       
-  sellingPrice    Decimal       
-  sku             String        
-  barcode         String?       
-  imageUrl        String?       
+  alcoholPercentage Decimal
+  mrp             Decimal
+  sellingPrice    Decimal
+  sku             String
+  barcode         String?
+  imageUrl        String?
   status          ProductStatus @default(ACTIVE)
   isAgeRestricted Boolean       @default(true)
 
@@ -415,16 +417,16 @@ model Product {
   @@index([brand])
   @@index([name])
   @@index([createdAt])
-  @
+
 }
 
 model Category {
-  id          String   @id @default(uuid()) 
-  name        String   
-  slug        String   @unique 
-  description String?  
-  imageUrl    String?  
-  parentId    String?  
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  description String?
+  imageUrl    String?
+  parentId    String?
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -436,13 +438,13 @@ model Category {
   @@index([parentId])
   @@index([slug])
   @@index([isActive])
-  @
+
 }
 
 model Inventory {
-  id                 String          @id @default(uuid()) 
-  productId          String          @unique 
-  retailerId         String          
+  id                 String          @id @default(uuid())
+  productId          String          @unique
+  retailerId         String
   stockQuantity      Int             @default(0)
   reservedQuantity   Int             @default(0)
   lowStockThreshold  Int             @default(10)
@@ -455,19 +457,19 @@ model Inventory {
   @@unique([productId, retailerId])
   @@index([retailerId])
   @@index([status])
-  @
+
 }
 
 model Address {
-  id        String   @id @default(uuid()) 
-  userId    String   
-  label     String?  
-  line1     String   
-  line2     String?  
-  city      String   
-  state     String   
-  zipCode   String   
-  country   String   @default("IN") 
+  id        String   @id @default(uuid())
+  userId    String
+  label     String?
+  line1     String
+  line2     String?
+  city      String
+  state     String
+  zipCode   String
+  country   String   @default("IN")
   latitude  Float
   longitude Float
   isDefault Boolean  @default(false)
@@ -479,12 +481,12 @@ model Address {
 
   @@index([userId])
   @@index([userId, isDefault])
-  @
+
 }
 
 model Cart {
-  id        String   @id @default(uuid()) 
-  userId    String   @unique 
+  id        String   @id @default(uuid())
+  userId    String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -492,16 +494,16 @@ model Cart {
   items CartItem[]
 
   @@index([userId])
-  @
+
 }
 
 model CartItem {
-  id        String   @id @default(uuid()) 
-  cartId    String   
-  productId String   
-  retailerId String  
+  id        String   @id @default(uuid())
+  cartId    String
+  productId String
+  retailerId String
   quantity  Int      @default(1)
-  unitPrice Decimal  
+  unitPrice Decimal
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -513,29 +515,29 @@ model CartItem {
   @@index([cartId])
   @@index([productId])
   @@index([retailerId])
-  @
+
 }
 
 model Order {
-  id                    String      @id @default(uuid()) 
-  orderNumber           String      @unique 
-  customerId            String      
-  retailerId            String      
-  deliveryAddressId     String      
+  id                    String      @id @default(uuid())
+  orderNumber           String      @unique
+  customerId            String
+  retailerId            String
+  deliveryAddressId     String
   status                OrderStatus @default(CREATED)
 
-  subtotal              Decimal     
-  taxAmount             Decimal     @default(0) 
-  deliveryFee           Decimal     @default(0) 
-  platformFee           Decimal     @default(0) 
-  totalAmount           Decimal     
+  subtotal              Decimal
+  taxAmount             Decimal     @default(0)
+  deliveryFee           Decimal     @default(0)
+  platformFee           Decimal     @default(0)
+  totalAmount           Decimal
 
-  notes                 String?     
-  specialInstructions   String?     
+  notes                 String?
+  specialInstructions   String?
   estimatedDeliveryAt   DateTime?
   actualDeliveryAt      DateTime?
   cancelledAt           DateTime?
-  cancelReason          String?     
+  cancelReason          String?
 
   createdAt             DateTime    @default(now())
   updatedAt             DateTime    @updatedAt
@@ -558,16 +560,16 @@ model Order {
   @@index([orderNumber])
   @@index([createdAt])
   @@index([customerId, status])
-  @
+
 }
 
 model OrderItem {
-  id         String   @id @default(uuid()) 
-  orderId    String   
-  productId  String   
+  id         String   @id @default(uuid())
+  orderId    String
+  productId  String
   quantity   Int      @default(1)
-  unitPrice  Decimal  
-  totalPrice Decimal  
+  unitPrice  Decimal
+  totalPrice Decimal
   createdAt  DateTime @default(now())
 
   order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
@@ -575,16 +577,16 @@ model OrderItem {
 
   @@index([orderId])
   @@index([productId])
-  @
+
 }
 
 model Payment {
-  id                   String        @id @default(uuid()) 
-  orderId              String        
-  amount               Decimal       
-  currency             String        @default("INR") 
-  method               String        
-  providerTransactionId String?       
+  id                   String        @id @default(uuid())
+  orderId              String
+  amount               Decimal
+  currency             String        @default("INR")
+  method               String
+  providerTransactionId String?
   status               PaymentStatus @default(INITIATED)
   metadata             Json?
   createdAt            DateTime      @default(now())
@@ -596,17 +598,17 @@ model Payment {
   @@index([orderId])
   @@index([status])
   @@index([providerTransactionId])
-  @
+
 }
 
 model Refund {
-  id          String       @id @default(uuid()) 
-  orderId     String       
-  paymentId   String       
-  amount      Decimal      
-  reason      String       
+  id          String       @id @default(uuid())
+  orderId     String
+  paymentId   String
+  amount      Decimal
+  reason      String
   status      RefundStatus @default(PENDING)
-  processedBy String?      
+  processedBy String?
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
@@ -617,19 +619,19 @@ model Refund {
   @@index([orderId])
   @@index([paymentId])
   @@index([status])
-  @
+
 }
 
 model Delivery {
-  id               String         @id @default(uuid()) 
-  orderId          String         @unique 
-  agentId          String         
+  id               String         @id @default(uuid())
+  orderId          String         @unique
+  agentId          String
   status           DeliveryStatus @default(ASSIGNED)
   pickupLatitude   Float
   pickupLongitude  Float
   currentLatitude  Float?
   currentLongitude Float?
-  distanceKm       Decimal?       
+  distanceKm       Decimal?
   estimatedMinutes Int?
   actualMinutes    Int?
   pickupAt         DateTime?
@@ -640,25 +642,26 @@ model Delivery {
   order        Order              @relation(fields: [orderId], references: [id], onDelete: Restrict)
   agent        DeliveryAgent      @relation(fields: [agentId], references: [id], onDelete: Restrict)
   verifications DeliveryVerification[]
+  reviews      Review[]
 
   @@index([orderId])
   @@index([agentId])
   @@index([status])
-  @
+
 }
 
 model DeliveryVerification {
-  id                String   @id @default(uuid()) 
-  deliveryId        String   
-  orderId           String   
-  customerId        String   
-  verificationType  String   
-  idDocumentUrl     String?  
-  idDocumentType    String?  
+  id                String   @id @default(uuid())
+  deliveryId        String
+  orderId           String
+  customerId        String
+  verificationType  String
+  idDocumentUrl     String?
+  idDocumentType    String?
   isVerified        Boolean  @default(false)
-  verifiedBy        String?  
+  verifiedBy        String?
   verifiedAt        DateTime?
-  notes             String?  
+  notes             String?
   createdAt         DateTime @default(now())
 
   delivery  Delivery @relation(fields: [deliveryId], references: [id], onDelete: Cascade)
@@ -670,19 +673,19 @@ model DeliveryVerification {
   @@index([orderId])
   @@index([customerId])
   @@index([verifiedBy])
-  @
+
 }
 
 model ComplianceRule {
-  id             String             @id @default(uuid()) 
-  jurisdiction   String             
+  id             String             @id @default(uuid())
+  jurisdiction   String
   ruleType       ComplianceRuleType
   ruleValue      Json
-  effectiveFrom  DateTime           
-  effectiveUntil DateTime?          
+  effectiveFrom  DateTime
+  effectiveUntil DateTime?
   status         ComplianceRuleStatus @default(ACTIVE)
-  createdBy      String             
-  updatedBy      String             
+  createdBy      String
+  updatedBy      String
   createdAt      DateTime           @default(now())
   updatedAt      DateTime           @updatedAt
 
@@ -694,19 +697,19 @@ model ComplianceRule {
   @@index([status])
   @@index([effectiveFrom, effectiveUntil])
   @@index([jurisdiction, ruleType, status])
-  @
+
 }
 
 model Jurisdiction {
-  id                       String   @id @default(uuid()) 
-  name                     String   
-  code                     String   @unique 
-  country                  String   
-  state                    String   
-  city                     String?  
+  id                       String   @id @default(uuid())
+  name                     String
+  code                     String   @unique
+  country                  String
+  state                    String
+  city                     String?
   isAlcoholDeliveryEnabled Boolean  @default(false)
   minimumAge               Int      @default(21)
-  timezone                 String   @default("Asia/Kolkata") 
+  timezone                 String   @default("Asia/Kolkata")
   createdAt                DateTime @default(now())
   updatedAt                DateTime @updatedAt
 
@@ -715,14 +718,14 @@ model Jurisdiction {
 
   @@index([code])
   @@index([country, state])
-  @
+
 }
 
 model DryDay {
-  id            String       @id @default(uuid()) 
-  jurisdictionId String     
-  date          DateTime     
-  reason        String?      
+  id            String       @id @default(uuid())
+  jurisdictionId String
+  date          DateTime
+  reason        String?
   status        DryDayStatus @default(ACTIVE)
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
@@ -733,16 +736,16 @@ model DryDay {
   @@index([jurisdictionId])
   @@index([date])
   @@index([status])
-  @
+
 }
 
 model OperatingHours {
-  id             String    @id @default(uuid()) 
-  retailerId     String?   
-  jurisdictionId String?   
+  id             String    @id @default(uuid())
+  retailerId     String?
+  jurisdictionId String?
   dayOfWeek      Int       @db.SmallInt
-  openTime       String    
-  closeTime      String    
+  openTime       String
+  closeTime      String
   isClosed       Boolean   @default(false)
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
@@ -755,15 +758,15 @@ model OperatingHours {
   @@index([retailerId])
   @@index([jurisdictionId])
   @@index([dayOfWeek])
-  @
+
 }
 
 model Notification {
-  id        String           @id @default(uuid()) 
-  userId    String           
+  id        String           @id @default(uuid())
+  userId    String
   type      NotificationType
-  title     String           
-  body      String           
+  title     String
+  body      String
   data      Json?
   readAt    DateTime?
   createdAt DateTime         @default(now())
@@ -774,19 +777,19 @@ model Notification {
   @@index([userId, readAt])
   @@index([type])
   @@index([createdAt])
-  @
+
 }
 
 model AuditLog {
-  id        String   @id @default(uuid()) 
-  actorId   String?  
-  actorRole String?  
-  action    String   
-  entityType String  
-  entityId   String  
+  id        String   @id @default(uuid())
+  actorId   String?
+  actorRole String?
+  action    String
+  entityType String
+  entityId   String
   metadata  Json?
-  ipAddress String?  
-  userAgent String?  
+  ipAddress String?
+  userAgent String?
   createdAt DateTime @default(now())
 
   actor User? @relation(fields: [actorId], references: [id], onDelete: SetNull)
@@ -796,18 +799,18 @@ model AuditLog {
   @@index([action])
   @@index([createdAt])
   @@index([actorId, action])
-  @
+
 }
 
 model SupportTicket {
-  id          String               @id @default(uuid()) 
-  userId      String               
-  subject     String               
-  description String               
-  category    String               
+  id          String               @id @default(uuid())
+  userId      String
+  subject     String
+  description String
+  category    String
   status      SupportTicketStatus  @default(OPEN)
   priority    Int                  @default(0)
-  assignedTo  String?              
+  assignedTo  String?
   createdAt   DateTime             @default(now())
   updatedAt   DateTime             @updatedAt
 
@@ -819,13 +822,13 @@ model SupportTicket {
   @@index([status])
   @@index([category])
   @@index([createdAt])
-  @
+
 }
 
 model Favorite {
-  id        String   @id @default(uuid()) 
-  userId    String   
-  productId String   
+  id        String   @id @default(uuid())
+  userId    String
+  productId String
   createdAt DateTime @default(now())
 
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -834,17 +837,18 @@ model Favorite {
   @@unique([userId, productId])
   @@index([userId])
   @@index([productId])
-  @
+
 }
 
 model Review {
-  id          String    @id @default(uuid()) 
-  userId      String    
-  retailerId  String?   
-  productId   String?   
-  deliveryId  String?   
+  id          String    @id @default(uuid())
+  userId      String
+  retailerId  String?
+  productId   String?
+  deliveryId  String?
+  orderId     String?
   rating      Int       @db.SmallInt
-  comment     String?   
+  comment     String?
   isVerified  Boolean   @default(false)
   isModerated Boolean   @default(false)
   createdAt   DateTime  @default(now())
@@ -854,37 +858,38 @@ model Review {
   retailer Retailer? @relation(fields: [retailerId], references: [id], onDelete: SetNull)
   product  Product?  @relation(fields: [productId], references: [id], onDelete: SetNull)
   delivery Delivery? @relation(fields: [deliveryId], references: [id], onDelete: SetNull)
-  order    Order?
+  order    Order?    @relation(fields: [orderId], references: [id], onDelete: SetNull)
 
   @@index([userId])
   @@index([retailerId])
   @@index([productId])
   @@index([deliveryId])
+  @@index([orderId])
   @@index([rating])
-  @
+
 }
 
 model SystemSetting {
-  id          String   @id @default(uuid()) 
-  key         String   @unique 
+  id          String   @id @default(uuid())
+  key         String   @unique
   value       Json
-  description String?  
-  updatedBy   String   
+  description String?
+  updatedBy   String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   updater User @relation(fields: [updatedBy], references: [id], onDelete: Restrict)
 
   @@index([key])
-  @
+
 }
 
 model OTP {
-  id        String   @id @default(uuid()) 
-  userId    String?  
-  phone     String?  
-  email     String?  
-  code      String   
+  id        String   @id @default(uuid())
+  userId    String?
+  phone     String?
+  email     String?
+  code      String
   type      OTPType
   expiresAt DateTime
   usedAt    DateTime?
@@ -897,15 +902,15 @@ model OTP {
   @@index([email])
   @@index([code, type])
   @@index([expiresAt])
-  @
+
 }
 
 model Session {
-  id        String   @id @default(uuid()) 
-  userId    String   
-  token     String   @unique 
-  ipAddress String?  
-  userAgent String?  
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  ipAddress String?
+  userAgent String?
   expiresAt DateTime
   createdAt DateTime @default(now())
 
@@ -914,5 +919,5 @@ model Session {
   @@index([userId])
   @@index([token])
   @@index([expiresAt])
-  @
+
 }
