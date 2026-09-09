@@ -179,11 +179,11 @@ enum DryDayStatus {
 // ─── Models ──────────────────────────────────────────────────────────────────
 
 model User {
-  id              String    @id @default(uuid()) @db.Uuid
-  email           String    @unique @db.VarChar(255)
-  phone           String?   @unique @db.VarChar(20)
-  passwordHash    String    @db.VarChar(255)
-  name            String    @db.VarChar(255)
+  id              String    @id @default(uuid()) 
+  email           String    @unique 
+  phone           String?   @unique 
+  passwordHash    String    
+  name            String    
   role            UserRole  @default(CUSTOMER)
   status          UserStatus @default(PENDING_VERIFICATION)
   emailVerified   Boolean   @default(false)
@@ -220,23 +220,23 @@ model User {
   @@index([role])
   @@index([status])
   @@index([createdAt])
-  @@map("users")
+  @
 }
 
 model CustomerProfile {
-  id                    String                @id @default(uuid()) @db.Uuid
-  userId                String                @unique @db.Uuid
-  dateOfBirth           DateTime              @db.Date
+  id                    String                @id @default(uuid()) 
+  userId                String                @unique 
+  dateOfBirth           DateTime              
   ageVerified           AgeVerificationStatus @default(PENDING)
-  verificationMethod    String?               @db.VarChar(50)
-  verificationReference String?               @db.VarChar(255)
+  verificationMethod    String?               
+  verificationReference String?               
 
-  addressLine1          String                @db.VarChar(255)
-  addressLine2          String?               @db.VarChar(255)
-  addressCity           String                @db.VarChar(100)
-  addressState          String                @db.VarChar(100)
-  addressZipCode        String                @db.VarChar(20)
-  addressCountry        String                @default("IN") @db.VarChar(2)
+  addressLine1          String                
+  addressLine2          String?               
+  addressCity           String                
+  addressState          String                
+  addressZipCode        String                
+  addressCountry        String                @default("IN") 
   addressLatitude       Float?
   addressLongitude      Float?
   addressIsDefault      Boolean               @default(true)
@@ -248,34 +248,34 @@ model CustomerProfile {
 
   @@index([userId])
   @@index([ageVerified])
-  @@map("customer_profiles")
+  @
 }
 
 model Retailer {
-  id                          String         @id @default(uuid()) @db.Uuid
-  ownerId                     String         @db.Uuid
-  legalBusinessName           String         @db.VarChar(255)
-  displayName                 String         @db.VarChar(255)
-  description                 String?        @db.Text
-  phone                       String         @db.VarChar(20)
-  email                       String         @db.VarChar(255)
+  id                          String         @id @default(uuid()) 
+  ownerId                     String         
+  legalBusinessName           String         
+  displayName                 String         
+  description                 String?        
+  phone                       String         
+  email                       String         
 
-  addressLine1                String         @db.VarChar(255)
-  addressLine2                String?        @db.VarChar(255)
-  addressCity                 String         @db.VarChar(100)
-  addressState                String         @db.VarChar(100)
-  addressZipCode              String         @db.VarChar(20)
-  addressCountry              String         @default("IN") @db.VarChar(2)
+  addressLine1                String         
+  addressLine2                String?        
+  addressCity                 String         
+  addressState                String         
+  addressZipCode              String         
+  addressCountry              String         @default("IN") 
   latitude                    Float
   longitude                   Float
 
-  logoUrl                     String?        @db.VarChar(500)
-  bannerUrl                   String?        @db.VarChar(500)
+  logoUrl                     String?        
+  bannerUrl                   String?        
   status                      RetailerStatus @default(PENDING)
-  minimumOrderAmount          Decimal        @default(0) @db.Decimal(10, 2)
+  minimumOrderAmount          Decimal        @default(0) 
   estimatedDeliveryTimeMinutes Int           @default(60)
-  operatingRadiusKm           Decimal        @default(10) @db.Decimal(5, 2)
-  rating                      Decimal        @default(0) @db.Decimal(3, 2)
+  operatingRadiusKm           Decimal        @default(10) 
+  rating                      Decimal        @default(0) 
   totalOrders                 Int            @default(0)
 
   createdAt                   DateTime       @default(now())
@@ -296,21 +296,21 @@ model Retailer {
   @@index([status])
   @@index([latitude, longitude])
   @@index([createdAt])
-  @@map("retailers")
+  @
 }
 
 model RetailerLicence {
-  id                 String                    @id @default(uuid()) @db.Uuid
-  retailerId         String                    @db.Uuid
-  licenceNumber      String                    @db.VarChar(100)
-  licenceType        String                    @db.VarChar(50)
-  issuingAuthority   String                    @db.VarChar(255)
-  issueDate          DateTime                  @db.Date
-  expiryDate         DateTime                  @db.Date
-  documentUrl        String                    @db.VarChar(500)
+  id                 String                    @id @default(uuid()) 
+  retailerId         String                    
+  licenceNumber      String                    
+  licenceType        String                    
+  issuingAuthority   String                    
+  issueDate          DateTime                  
+  expiryDate         DateTime                  
+  documentUrl        String                    
   verificationStatus LicenceVerificationStatus @default(PENDING)
-  verifiedBy         String?                   @db.Uuid
-  verificationNotes  String?                   @db.Text
+  verifiedBy         String?                   
+  verificationNotes  String?                   
   verifiedAt         DateTime?
   createdAt          DateTime                  @default(now())
   updatedAt          DateTime                  @updatedAt
@@ -321,13 +321,13 @@ model RetailerLicence {
   @@index([retailerId])
   @@index([verificationStatus])
   @@index([licenceNumber])
-  @@map("retailer_licences")
+  @
 }
 
 model RetailerStaff {
-  id         String            @id @default(uuid()) @db.Uuid
-  retailerId String            @db.Uuid
-  userId     String            @db.Uuid
+  id         String            @id @default(uuid()) 
+  retailerId String            
+  userId     String            
   role       RetailerStaffRole @default(STAFF)
   createdAt  DateTime          @default(now())
   updatedAt  DateTime          @updatedAt
@@ -338,29 +338,29 @@ model RetailerStaff {
   @@unique([retailerId, userId])
   @@index([retailerId])
   @@index([userId])
-  @@map("retailer_staff")
+  @
 }
 
 model DeliveryAgent {
-  id              String              @id @default(uuid()) @db.Uuid
-  userId          String              @unique @db.Uuid
-  dateOfBirth     DateTime            @db.Date
-  vehicleType     String              @db.VarChar(50)
-  vehicleNumber   String              @db.VarChar(20)
-  licenseNumber   String              @db.VarChar(50)
+  id              String              @id @default(uuid()) 
+  userId          String              @unique 
+  dateOfBirth     DateTime            
+  vehicleType     String              
+  vehicleNumber   String              
+  licenseNumber   String              
 
-  addressLine1    String              @db.VarChar(255)
-  addressLine2    String?             @db.VarChar(255)
-  addressCity     String              @db.VarChar(100)
-  addressState    String              @db.VarChar(100)
-  addressZipCode  String              @db.VarChar(20)
-  addressCountry  String              @default("IN") @db.VarChar(2)
+  addressLine1    String              
+  addressLine2    String?             
+  addressCity     String              
+  addressState    String              
+  addressZipCode  String              
+  addressCountry  String              @default("IN") 
   latitude        Float
   longitude       Float
 
   isAvailable     Boolean             @default(false)
-  currentOrderId  String?             @db.Uuid
-  rating          Decimal             @default(0) @db.Decimal(3, 2)
+  currentOrderId  String?             
+  rating          Decimal             @default(0) 
   totalDeliveries Int                 @default(0)
   status          DeliveryAgentStatus @default(PENDING)
 
@@ -376,23 +376,23 @@ model DeliveryAgent {
   @@index([status])
   @@index([latitude, longitude])
   @@index([isAvailable])
-  @@map("delivery_agents")
+  @
 }
 
 model Product {
-  id              String        @id @default(uuid()) @db.Uuid
-  retailerId      String        @db.Uuid
-  categoryId      String        @db.Uuid
-  name            String        @db.VarChar(255)
-  brand           String        @db.VarChar(255)
-  description     String?       @db.Text
+  id              String        @id @default(uuid()) 
+  retailerId      String        
+  categoryId      String        
+  name            String        
+  brand           String        
+  description     String?       
   bottleSizeMl    Int
-  alcoholPercentage Decimal     @db.Decimal(5, 2)
-  mrp             Decimal       @db.Decimal(10, 2)
-  sellingPrice    Decimal       @db.Decimal(10, 2)
-  sku             String        @db.VarChar(100)
-  barcode         String?       @db.VarChar(50)
-  imageUrl        String?       @db.VarChar(500)
+  alcoholPercentage Decimal     
+  mrp             Decimal       
+  sellingPrice    Decimal       
+  sku             String        
+  barcode         String?       
+  imageUrl        String?       
   status          ProductStatus @default(ACTIVE)
   isAgeRestricted Boolean       @default(true)
 
@@ -415,16 +415,16 @@ model Product {
   @@index([brand])
   @@index([name])
   @@index([createdAt])
-  @@map("products")
+  @
 }
 
 model Category {
-  id          String   @id @default(uuid()) @db.Uuid
-  name        String   @db.VarChar(100)
-  slug        String   @unique @db.VarChar(100)
-  description String?  @db.Text
-  imageUrl    String?  @db.VarChar(500)
-  parentId    String?  @db.Uuid
+  id          String   @id @default(uuid()) 
+  name        String   
+  slug        String   @unique 
+  description String?  
+  imageUrl    String?  
+  parentId    String?  
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -436,13 +436,13 @@ model Category {
   @@index([parentId])
   @@index([slug])
   @@index([isActive])
-  @@map("categories")
+  @
 }
 
 model Inventory {
-  id                 String          @id @default(uuid()) @db.Uuid
-  productId          String          @unique @db.Uuid
-  retailerId         String          @db.Uuid
+  id                 String          @id @default(uuid()) 
+  productId          String          @unique 
+  retailerId         String          
   stockQuantity      Int             @default(0)
   reservedQuantity   Int             @default(0)
   lowStockThreshold  Int             @default(10)
@@ -455,19 +455,19 @@ model Inventory {
   @@unique([productId, retailerId])
   @@index([retailerId])
   @@index([status])
-  @@map("inventory")
+  @
 }
 
 model Address {
-  id        String   @id @default(uuid()) @db.Uuid
-  userId    String   @db.Uuid
-  label     String?  @db.VarChar(50)
-  line1     String   @db.VarChar(255)
-  line2     String?  @db.VarChar(255)
-  city      String   @db.VarChar(100)
-  state     String   @db.VarChar(100)
-  zipCode   String   @db.VarChar(20)
-  country   String   @default("IN") @db.VarChar(2)
+  id        String   @id @default(uuid()) 
+  userId    String   
+  label     String?  
+  line1     String   
+  line2     String?  
+  city      String   
+  state     String   
+  zipCode   String   
+  country   String   @default("IN") 
   latitude  Float
   longitude Float
   isDefault Boolean  @default(false)
@@ -479,12 +479,12 @@ model Address {
 
   @@index([userId])
   @@index([userId, isDefault])
-  @@map("addresses")
+  @
 }
 
 model Cart {
-  id        String   @id @default(uuid()) @db.Uuid
-  userId    String   @unique @db.Uuid
+  id        String   @id @default(uuid()) 
+  userId    String   @unique 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -492,16 +492,16 @@ model Cart {
   items CartItem[]
 
   @@index([userId])
-  @@map("carts")
+  @
 }
 
 model CartItem {
-  id        String   @id @default(uuid()) @db.Uuid
-  cartId    String   @db.Uuid
-  productId String   @db.Uuid
-  retailerId String  @db.Uuid
+  id        String   @id @default(uuid()) 
+  cartId    String   
+  productId String   
+  retailerId String  
   quantity  Int      @default(1)
-  unitPrice Decimal  @db.Decimal(10, 2)
+  unitPrice Decimal  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -513,29 +513,29 @@ model CartItem {
   @@index([cartId])
   @@index([productId])
   @@index([retailerId])
-  @@map("cart_items")
+  @
 }
 
 model Order {
-  id                    String      @id @default(uuid()) @db.Uuid
-  orderNumber           String      @unique @db.VarChar(50)
-  customerId            String      @db.Uuid
-  retailerId            String      @db.Uuid
-  deliveryAddressId     String      @db.Uuid
+  id                    String      @id @default(uuid()) 
+  orderNumber           String      @unique 
+  customerId            String      
+  retailerId            String      
+  deliveryAddressId     String      
   status                OrderStatus @default(CREATED)
 
-  subtotal              Decimal     @db.Decimal(10, 2)
-  taxAmount             Decimal     @default(0) @db.Decimal(10, 2)
-  deliveryFee           Decimal     @default(0) @db.Decimal(10, 2)
-  platformFee           Decimal     @default(0) @db.Decimal(10, 2)
-  totalAmount           Decimal     @db.Decimal(10, 2)
+  subtotal              Decimal     
+  taxAmount             Decimal     @default(0) 
+  deliveryFee           Decimal     @default(0) 
+  platformFee           Decimal     @default(0) 
+  totalAmount           Decimal     
 
-  notes                 String?     @db.Text
-  specialInstructions   String?     @db.Text
+  notes                 String?     
+  specialInstructions   String?     
   estimatedDeliveryAt   DateTime?
   actualDeliveryAt      DateTime?
   cancelledAt           DateTime?
-  cancelReason          String?     @db.Text
+  cancelReason          String?     
 
   createdAt             DateTime    @default(now())
   updatedAt             DateTime    @updatedAt
@@ -558,16 +558,16 @@ model Order {
   @@index([orderNumber])
   @@index([createdAt])
   @@index([customerId, status])
-  @@map("orders")
+  @
 }
 
 model OrderItem {
-  id         String   @id @default(uuid()) @db.Uuid
-  orderId    String   @db.Uuid
-  productId  String   @db.Uuid
+  id         String   @id @default(uuid()) 
+  orderId    String   
+  productId  String   
   quantity   Int      @default(1)
-  unitPrice  Decimal  @db.Decimal(10, 2)
-  totalPrice Decimal  @db.Decimal(10, 2)
+  unitPrice  Decimal  
+  totalPrice Decimal  
   createdAt  DateTime @default(now())
 
   order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
@@ -575,16 +575,16 @@ model OrderItem {
 
   @@index([orderId])
   @@index([productId])
-  @@map("order_items")
+  @
 }
 
 model Payment {
-  id                   String        @id @default(uuid()) @db.Uuid
-  orderId              String        @db.Uuid
-  amount               Decimal       @db.Decimal(10, 2)
-  currency             String        @default("INR") @db.VarChar(3)
-  method               String        @db.VarChar(50)
-  providerTransactionId String?       @db.VarChar(255)
+  id                   String        @id @default(uuid()) 
+  orderId              String        
+  amount               Decimal       
+  currency             String        @default("INR") 
+  method               String        
+  providerTransactionId String?       
   status               PaymentStatus @default(INITIATED)
   metadata             Json?
   createdAt            DateTime      @default(now())
@@ -596,17 +596,17 @@ model Payment {
   @@index([orderId])
   @@index([status])
   @@index([providerTransactionId])
-  @@map("payments")
+  @
 }
 
 model Refund {
-  id          String       @id @default(uuid()) @db.Uuid
-  orderId     String       @db.Uuid
-  paymentId   String       @db.Uuid
-  amount      Decimal      @db.Decimal(10, 2)
-  reason      String       @db.Text
+  id          String       @id @default(uuid()) 
+  orderId     String       
+  paymentId   String       
+  amount      Decimal      
+  reason      String       
   status      RefundStatus @default(PENDING)
-  processedBy String?      @db.Uuid
+  processedBy String?      
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
@@ -617,19 +617,19 @@ model Refund {
   @@index([orderId])
   @@index([paymentId])
   @@index([status])
-  @@map("refunds")
+  @
 }
 
 model Delivery {
-  id               String         @id @default(uuid()) @db.Uuid
-  orderId          String         @unique @db.Uuid
-  agentId          String         @db.Uuid
+  id               String         @id @default(uuid()) 
+  orderId          String         @unique 
+  agentId          String         
   status           DeliveryStatus @default(ASSIGNED)
   pickupLatitude   Float
   pickupLongitude  Float
   currentLatitude  Float?
   currentLongitude Float?
-  distanceKm       Decimal?       @db.Decimal(6, 2)
+  distanceKm       Decimal?       
   estimatedMinutes Int?
   actualMinutes    Int?
   pickupAt         DateTime?
@@ -644,21 +644,21 @@ model Delivery {
   @@index([orderId])
   @@index([agentId])
   @@index([status])
-  @@map("deliveries")
+  @
 }
 
 model DeliveryVerification {
-  id                String   @id @default(uuid()) @db.Uuid
-  deliveryId        String   @db.Uuid
-  orderId           String   @db.Uuid
-  customerId        String   @db.Uuid
-  verificationType  String   @db.VarChar(50)
-  idDocumentUrl     String?  @db.VarChar(500)
-  idDocumentType    String?  @db.VarChar(50)
+  id                String   @id @default(uuid()) 
+  deliveryId        String   
+  orderId           String   
+  customerId        String   
+  verificationType  String   
+  idDocumentUrl     String?  
+  idDocumentType    String?  
   isVerified        Boolean  @default(false)
-  verifiedBy        String?  @db.Uuid
+  verifiedBy        String?  
   verifiedAt        DateTime?
-  notes             String?  @db.Text
+  notes             String?  
   createdAt         DateTime @default(now())
 
   delivery  Delivery @relation(fields: [deliveryId], references: [id], onDelete: Cascade)
@@ -670,19 +670,19 @@ model DeliveryVerification {
   @@index([orderId])
   @@index([customerId])
   @@index([verifiedBy])
-  @@map("delivery_verifications")
+  @
 }
 
 model ComplianceRule {
-  id             String             @id @default(uuid()) @db.Uuid
-  jurisdiction   String             @db.VarChar(100)
+  id             String             @id @default(uuid()) 
+  jurisdiction   String             
   ruleType       ComplianceRuleType
   ruleValue      Json
-  effectiveFrom  DateTime           @db.Date
-  effectiveUntil DateTime?          @db.Date
+  effectiveFrom  DateTime           
+  effectiveUntil DateTime?          
   status         ComplianceRuleStatus @default(ACTIVE)
-  createdBy      String             @db.Uuid
-  updatedBy      String             @db.Uuid
+  createdBy      String             
+  updatedBy      String             
   createdAt      DateTime           @default(now())
   updatedAt      DateTime           @updatedAt
 
@@ -694,19 +694,19 @@ model ComplianceRule {
   @@index([status])
   @@index([effectiveFrom, effectiveUntil])
   @@index([jurisdiction, ruleType, status])
-  @@map("compliance_rules")
+  @
 }
 
 model Jurisdiction {
-  id                       String   @id @default(uuid()) @db.Uuid
-  name                     String   @db.VarChar(255)
-  code                     String   @unique @db.VarChar(50)
-  country                  String   @db.VarChar(2)
-  state                    String   @db.VarChar(100)
-  city                     String?  @db.VarChar(100)
+  id                       String   @id @default(uuid()) 
+  name                     String   
+  code                     String   @unique 
+  country                  String   
+  state                    String   
+  city                     String?  
   isAlcoholDeliveryEnabled Boolean  @default(false)
   minimumAge               Int      @default(21)
-  timezone                 String   @default("Asia/Kolkata") @db.VarChar(50)
+  timezone                 String   @default("Asia/Kolkata") 
   createdAt                DateTime @default(now())
   updatedAt                DateTime @updatedAt
 
@@ -715,14 +715,14 @@ model Jurisdiction {
 
   @@index([code])
   @@index([country, state])
-  @@map("jurisdictions")
+  @
 }
 
 model DryDay {
-  id            String       @id @default(uuid()) @db.Uuid
-  jurisdictionId String     @db.Uuid
-  date          DateTime     @db.Date
-  reason        String?      @db.Text
+  id            String       @id @default(uuid()) 
+  jurisdictionId String     
+  date          DateTime     
+  reason        String?      
   status        DryDayStatus @default(ACTIVE)
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
@@ -733,16 +733,16 @@ model DryDay {
   @@index([jurisdictionId])
   @@index([date])
   @@index([status])
-  @@map("dry_days")
+  @
 }
 
 model OperatingHours {
-  id             String    @id @default(uuid()) @db.Uuid
-  retailerId     String?   @db.Uuid
-  jurisdictionId String?   @db.Uuid
+  id             String    @id @default(uuid()) 
+  retailerId     String?   
+  jurisdictionId String?   
   dayOfWeek      Int       @db.SmallInt
-  openTime       String    @db.VarChar(5)
-  closeTime      String    @db.VarChar(5)
+  openTime       String    
+  closeTime      String    
   isClosed       Boolean   @default(false)
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
@@ -755,15 +755,15 @@ model OperatingHours {
   @@index([retailerId])
   @@index([jurisdictionId])
   @@index([dayOfWeek])
-  @@map("operating_hours")
+  @
 }
 
 model Notification {
-  id        String           @id @default(uuid()) @db.Uuid
-  userId    String           @db.Uuid
+  id        String           @id @default(uuid()) 
+  userId    String           
   type      NotificationType
-  title     String           @db.VarChar(255)
-  body      String           @db.Text
+  title     String           
+  body      String           
   data      Json?
   readAt    DateTime?
   createdAt DateTime         @default(now())
@@ -774,19 +774,19 @@ model Notification {
   @@index([userId, readAt])
   @@index([type])
   @@index([createdAt])
-  @@map("notifications")
+  @
 }
 
 model AuditLog {
-  id        String   @id @default(uuid()) @db.Uuid
-  actorId   String?  @db.Uuid
-  actorRole String?  @db.VarChar(50)
-  action    String   @db.VarChar(100)
-  entityType String  @db.VarChar(50)
-  entityId   String  @db.Uuid
+  id        String   @id @default(uuid()) 
+  actorId   String?  
+  actorRole String?  
+  action    String   
+  entityType String  
+  entityId   String  
   metadata  Json?
-  ipAddress String?  @db.VarChar(45)
-  userAgent String?  @db.VarChar(500)
+  ipAddress String?  
+  userAgent String?  
   createdAt DateTime @default(now())
 
   actor User? @relation(fields: [actorId], references: [id], onDelete: SetNull)
@@ -796,18 +796,18 @@ model AuditLog {
   @@index([action])
   @@index([createdAt])
   @@index([actorId, action])
-  @@map("audit_logs")
+  @
 }
 
 model SupportTicket {
-  id          String               @id @default(uuid()) @db.Uuid
-  userId      String               @db.Uuid
-  subject     String               @db.VarChar(255)
-  description String               @db.Text
-  category    String               @db.VarChar(50)
+  id          String               @id @default(uuid()) 
+  userId      String               
+  subject     String               
+  description String               
+  category    String               
   status      SupportTicketStatus  @default(OPEN)
   priority    Int                  @default(0)
-  assignedTo  String?              @db.Uuid
+  assignedTo  String?              
   createdAt   DateTime             @default(now())
   updatedAt   DateTime             @updatedAt
 
@@ -819,13 +819,13 @@ model SupportTicket {
   @@index([status])
   @@index([category])
   @@index([createdAt])
-  @@map("support_tickets")
+  @
 }
 
 model Favorite {
-  id        String   @id @default(uuid()) @db.Uuid
-  userId    String   @db.Uuid
-  productId String   @db.Uuid
+  id        String   @id @default(uuid()) 
+  userId    String   
+  productId String   
   createdAt DateTime @default(now())
 
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -834,17 +834,17 @@ model Favorite {
   @@unique([userId, productId])
   @@index([userId])
   @@index([productId])
-  @@map("favorites")
+  @
 }
 
 model Review {
-  id          String    @id @default(uuid()) @db.Uuid
-  userId      String    @db.Uuid
-  retailerId  String?   @db.Uuid
-  productId   String?   @db.Uuid
-  deliveryId  String?   @db.Uuid
+  id          String    @id @default(uuid()) 
+  userId      String    
+  retailerId  String?   
+  productId   String?   
+  deliveryId  String?   
   rating      Int       @db.SmallInt
-  comment     String?   @db.Text
+  comment     String?   
   isVerified  Boolean   @default(false)
   isModerated Boolean   @default(false)
   createdAt   DateTime  @default(now())
@@ -861,30 +861,30 @@ model Review {
   @@index([productId])
   @@index([deliveryId])
   @@index([rating])
-  @@map("reviews")
+  @
 }
 
 model SystemSetting {
-  id          String   @id @default(uuid()) @db.Uuid
-  key         String   @unique @db.VarChar(100)
+  id          String   @id @default(uuid()) 
+  key         String   @unique 
   value       Json
-  description String?  @db.Text
-  updatedBy   String   @db.Uuid
+  description String?  
+  updatedBy   String   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   updater User @relation(fields: [updatedBy], references: [id], onDelete: Restrict)
 
   @@index([key])
-  @@map("system_settings")
+  @
 }
 
 model OTP {
-  id        String   @id @default(uuid()) @db.Uuid
-  userId    String?  @db.Uuid
-  phone     String?  @db.VarChar(20)
-  email     String?  @db.VarChar(255)
-  code      String   @db.VarChar(10)
+  id        String   @id @default(uuid()) 
+  userId    String?  
+  phone     String?  
+  email     String?  
+  code      String   
   type      OTPType
   expiresAt DateTime
   usedAt    DateTime?
@@ -897,15 +897,15 @@ model OTP {
   @@index([email])
   @@index([code, type])
   @@index([expiresAt])
-  @@map("otps")
+  @
 }
 
 model Session {
-  id        String   @id @default(uuid()) @db.Uuid
-  userId    String   @db.Uuid
-  token     String   @unique @db.VarChar(500)
-  ipAddress String?  @db.VarChar(45)
-  userAgent String?  @db.VarChar(500)
+  id        String   @id @default(uuid()) 
+  userId    String   
+  token     String   @unique 
+  ipAddress String?  
+  userAgent String?  
   expiresAt DateTime
   createdAt DateTime @default(now())
 
@@ -914,5 +914,5 @@ model Session {
   @@index([userId])
   @@index([token])
   @@index([expiresAt])
-  @@map("sessions")
+  @
 }
